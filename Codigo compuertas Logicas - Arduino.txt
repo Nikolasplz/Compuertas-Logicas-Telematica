@@ -1,0 +1,122 @@
+//Compuertas logicas 
+//Tablas de verdad ( AND - OR - NAND - NOR - XOR ) 
+
+int pot = A0; // potenciometro conectado al pin A0
+int pot_val = 0; // valor inicial del potenciometro, ya que varía entre 0 y 1023
+
+//LED RGB
+int ROJO = 3;  // color rojo conectado al pin 3
+int VERDE = 5;  // color verde conectado al pin 5
+int AZUL = 6;  // color azul conectado al pin 6
+
+// PULSADORES ( normalmente abiertos) 
+int pulA = 11; // pulsador A conectado al pin 10
+int pulB = 10; // Pulsador B conectado al pin 11
+int pul_A = 0; // valor inicial del pulsador A
+int pul_B = 0; // valor inicial del pulsador B
+
+void setup() {
+ Serial.begin(9600); // Comunicacion entre arduino y pc
+ 
+ // Entradas
+  pinMode(pulA,INPUT);
+ pinMode(pulB,INPUT);
+
+ //Salidas
+ pinMode(ROJO,OUTPUT);
+ pinMode(VERDE,OUTPUT);
+ pinMode(AZUL,OUTPUT);
+
+}
+
+void loop() {
+  pot_val = analogRead(pot); // Lee el valor del potenciometro 
+  pul_A = digitalRead(pulA); // Lee el valor del pulsador A
+  pul_B = digitalRead(pulB); // Lee el valor del pulsador B
+
+
+Serial.println(pul_A);Serial.print(" --Pulsador_A-- "); // Muestra la variación del pulsador A (0 apagado, 1 encendido) 
+Serial.print(pot_val);Serial.print("--potenciometro-- ");  // Muestra la variación del potenciometro ( de 0 a 1023) 
+Serial.print(pul_B);Serial.print(" --pulsador_B-- "); // Muestra la variación del pulsador B ( 0 apagado, 1 encendido) 
+delay(150); // retardo para que muestre los datos de forma mas lenta
+ 
+// Caso 1 = Compuerta Logica AND, Color Rojo
+ if(pot_val>0 && pot_val<204){
+  Serial.println(" CASO 1 AND ");
+  if((pul_A == 1) & (pul_B == 1)){
+    analogWrite(ROJO, 0);
+    analogWrite(VERDE, 255);
+    analogWrite(AZUL, 255);
+  }
+  else{
+    analogWrite(ROJO, 255);
+    analogWrite(VERDE, 255);
+    analogWrite(AZUL, 255);
+  }
+ }
+
+// Caso 2 = Compuerta Logica OR, Color Violeta ( se obtiene de la combinación del rojo y azul) 
+if(pot_val>=204 && pot_val<408){
+ Serial.println(" CASO 2 OR ");
+  if(((pul_A == LOW) & (pul_B == HIGH)) || ((pul_A == HIGH) & (pul_B == LOW)) || ((pul_A == HIGH) & (pul_B == HIGH))){
+    analogWrite(ROJO, 0);
+    analogWrite(VERDE, 255);
+    analogWrite(AZUL, 0);
+    
+ }
+  else{
+    analogWrite(ROJO, 255);
+    analogWrite(VERDE, 255);
+    analogWrite(AZUL, 255);
+  }
+ }
+ 
+// Caso 3 = Compuerta Logica NAND, Color Amarillo ( se obtiene de la combinación del rojo y verde) 
+if(pot_val>=408 && pot_val<612){
+  Serial.println("  CASO 3 NAND ");
+  if(((pul_A == LOW) & (pul_B == LOW)) || ((pul_A == LOW) & (pul_B == HIGH)) || ((pul_A == HIGH) & (pul_B == LOW))){
+    analogWrite(ROJO, 0);
+    analogWrite(VERDE, 0);
+    analogWrite(AZUL, 255);
+    
+}
+  else{
+    analogWrite(ROJO, 255);
+    analogWrite(VERDE, 255);
+    analogWrite(AZUL, 255);
+  }
+}
+
+//Caso 4 = Compuerta Logica NOR, Color Azul 
+if(pot_val>=612 && pot_val<818){
+Serial.println(" CASO 4 NOR ");
+  if((pul_A == LOW ) & (pul_B == LOW)){
+    analogWrite(ROJO, 255);
+    analogWrite(VERDE, 255);
+    analogWrite(AZUL, 0);
+    
+  }
+  else{
+    analogWrite(ROJO, 255);
+    analogWrite(VERDE, 255);
+    analogWrite(AZUL, 255);
+  }
+}
+
+// Caso 5 = Compuerta Logic XOR, Color Verde
+if(pot_val>=818 && pot_val<=1024){
+ Serial.println(" CASO 5 XOR ");
+ if(((pul_A == 0) & (pul_B == 1)) || ((pul_A ==1) & (pul_B ==0))) {
+  analogWrite(ROJO, 255);
+  analogWrite(VERDE, 0);
+  analogWrite(AZUL, 255);
+ 
+ 
+ }
+ else{
+  analogWrite(ROJO, 255);
+  analogWrite(VERDE , 255);
+  analogWrite(AZUL , 255);
+ }
+}
+}
